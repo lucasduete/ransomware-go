@@ -14,11 +14,10 @@ import (
 )
 
 var (
-	wg            sync.WaitGroup
-	decrypt       bool
-	secret        string
-	target        string
-	directoryBase string
+	wg      sync.WaitGroup
+	decrypt bool
+	secret  string
+	target  string
 )
 
 func init() {
@@ -29,9 +28,9 @@ func init() {
 
 	if len(target) == 0 {
 		if runtime.GOOS == "windows" {
-			directoryBase = "C:/"
+			target = "C:/"
 		} else {
-			directoryBase = "/home/" + os.Getenv("USER")
+			target = "/home/" + os.Getenv("USER")
 		}
 	}
 }
