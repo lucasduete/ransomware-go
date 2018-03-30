@@ -5,6 +5,9 @@ import (
 	"flag"
 	"runtime"
 	"os"
+	"path/filepath"
+	"fmt"
+	"strings"
 )
 
 var (
@@ -30,9 +33,42 @@ func init() {
 	}
 }
 
+func fileCrypt(filePath string)  {
+
+}
+
+func start(path string) {
+	defer wg.Done()
+
+	pathInfo, err := os.Stat(path)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	switch mode := pathInfo.Mode(); {
+		case mode.IsDir():
+			filepath.Walk(path, func(relativePath string, info os.FileInfo, err error) error {
+				if strings.Compare(path, relativePath) != 0 {
+					wg.Add(1)
+					go fileCrypt(relativePath)
+				}
+				return nil
+			})
+		case mode.IsRegular():
+			wg.Add(1)
+			go fileCrypt(path)
+	}
+}
+
 func main() {
 
 	if len(secret) == 0 {
 		panic("Invalid secret, try: --secret=your_secret")
 	}
+
+	wg.Add(1)
+	go start("./test")
+	wg.Wait()
 }
