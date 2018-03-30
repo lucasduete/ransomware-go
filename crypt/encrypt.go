@@ -1,8 +1,8 @@
 package crypt
 
 import (
-	"crypto/aes"
 	"io"
+	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
 	"crypto/rand"
